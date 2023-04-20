@@ -1,7 +1,10 @@
 package sg.edu.nus.iss;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.Console;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -87,23 +90,94 @@ public class App
                 FileWriter fw = new FileWriter(dirPath + File.separator + loginuser, false);
                 PrintWriter pw = new PrintWriter(fw);
 
-
+                // 2. write to file using PrintWriter
                 String currentScanString = "";
                 Scanner inputScanner = new Scanner(input.substring(4));
-                while(inputScanner.hasNext());
+                while(inputScanner.hasNext()){
                 currentScanString = inputScanner.next();
                 cartItems.add(currentScanString);
 
-                // 2. write to file using PrintWriter
-                pw.write(currentScanString);
+                
+                // 3. flush and close the fileWriter & PrintWriter objects
+                pw.write(currentScanString + "\n");
+                }
 
                 pw.flush();
                 pw.close();
                 fw.close();
             }
-            
-            // 3. flush and close the fileWriter & PrintWriter objects
+
+            //user must be login first
+            //must perform the following first 
+            //e.g. login <loginuser>
+            if (input.equals("list")){
+                //1. need a File class and BufferedReader class to read the cart Items from the file
+                File readFile = new File(dirPath + File.separator + loginuser);
+                BufferedReader br = new BufferedReader(new FileReader(readFile));
+
+                String readFileInput = "";
+                
+                //reset the cartItems List collection
+                cartItems = new ArrayList<String>();
+
+                //2. while loop to read through all the item records in the file
+                while ((readFileInput = br.readLine()) != null){
+                    System.out.println(readFileInput);
+
+                    cartItems.add(readFileInput);
+
             }
+
+                //3. exit from while loop - close the BufferedReader class/object
+                br.close();
+                
+
+                }
+
+                //instead of using scanner object 
+                if (input.startsWith("delete")){
+                    //stringVal[0] --> "delete"
+                    //stringVal[1] --> index to delete from cartItems
+                    String [] stringVal = input.split(" ");
+
+                    //e.g. delete 2
+                    //remove 3rd item in the cartItems arrayList
+                    int deleteIndex = Integer.parseInt(stringVal[1]);
+                    if (deleteIndex <= cartItems.size()){
+                        cartItems.remove(deleteIndex);
+                    } else {
+                        System.out.println("Index out of range error.");
+                    }
+
+                   // could also do this
+                   // input.substring(7);
+
+                   //1. open FileWriter and BufferedWriter
+                   FileWriter fw = new FileWriter(dirPath + File.separator + loginuser, false);
+                   BufferedWriter bw = new BufferedWriter(fw);
+
+                   //2. loop to write cartItems to file
+                   int listIndex = 0;
+                   while (listIndex <cartItems.size()) {
+                    bw.write(cartItems.get(listIndex));
+                    bw.newLine();
+
+                    listIndex++;
+                   }
+                   
+
+                   //3. close BufferedWriter and FileWriter
+                   bw.flush();
+                   bw.close();
+                   fw.close();
+
+                }
+
+
+            } //end of the while loop
+
+
+            
+            } //end of the main function
         }
-    }
 
